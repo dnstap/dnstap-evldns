@@ -28,38 +28,8 @@ AC_PROG_LIBTOOL
 AC_PROG_LN_S
 
 # Checks for libraries.
-AC_ARG_WITH(ldns,
-	    [ --with-ldns=DIR          LDNS install directory], [
-	     	AM_CPPFLAGS="$AM_CPPFLAGS -I$withval/include"
-	     	AM_LDFLAGS="$AM_LDFLAGS -L$withval/lib"
-	    ])
-
-AC_ARG_WITH(libevent,
-	    [ --with-libevent=DIR      libevent install directory], [
-	     	AM_CPPFLAGS="$AM_CPPFLAGS -I$withval/include"
-	     	AM_LDFLAGS="$AM_LDFLAGS -L$withval/lib"
-	    ])
-
-# save user flags
-OLDCFLAGS="$CFLAGS"
-OLDCPPFLAGS="$CPPFLAGS"
-OLDLDFLAGS="$LDFLAGS"
-tmp_LIBS="$LIBS"
-
-# check for libraries using supplied flags
-CPPFLAGS="$AM_CPPFLAGS $CPPFLAGS"
-LDFLAGS="$AM_LDFLAGS $LDFLAGS"
-
-AC_CHECK_LIB([ldns], [ldns_dname_match_wildcard], [],
-	     AC_MSG_ERROR([libdns unuseable])
-)
-AC_CHECK_LIB([event], [event_base_new])
-
-# restore user flags
-CPPFLAGS="$OLDCPPFLAGS"
-CFLAGS="$OLDCFLAGS"
-LDFLAGS="$OLDLDFLAGS"
-LIBS="$tmp_LIBS"
+PKG_CHECK_MODULES([libevent], [libevent >= 2])
+PKG_CHECK_MODULES([libldns], [libldns >= 1.6.5])
 
 # Checks for header files.
 AC_CHECK_HEADERS([stdlib.h string.h unistd.h])
