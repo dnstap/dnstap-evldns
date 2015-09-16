@@ -12,6 +12,7 @@ AC_INIT([dnstap-evldns],
         [https://github.com/dnstap/dnstap-evldns])
 
 AC_CONFIG_MACRO_DIR([m4])
+AC_CONFIG_AUX_DIR([build-aux])
 AM_INIT_AUTOMAKE([foreign 1.11 silent-rules])
 AM_SILENT_RULES([yes])
 
