@@ -3,8 +3,14 @@
 # -*- Autoconf -*-
 # Process this file with autoconf to produce a configure script.
 
-AC_PREREQ(2.59)
-AC_INIT([evldns],[0.2],[ray@bellis.me.uk])
+AC_PREREQ(2.64)
+
+AC_INIT([dnstap-evldns],
+        [0.1.0],
+        [https://github.com/dnstap/dnstap-evldns/issues],
+        [dnstap-evldns],
+        [https://github.com/dnstap/dnstap-evldns])
+
 AC_CONFIG_MACRO_DIR([m4])
 AM_INIT_AUTOMAKE(foreign)
 
