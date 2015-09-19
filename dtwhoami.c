@@ -253,9 +253,14 @@ usage(void)
 	fprintf(stderr, "  -p <PORT-NUMBER>\n");
 	fprintf(stderr, "  -a <APEX-NAME>\n");
 	fprintf(stderr, "\n");
+	fprintf(stderr, "Optional arguments:\n");
+	fprintf(stderr, "  -t\n");
+	fprintf(stderr, "\n");
 	fprintf(stderr, "dtwhoami will listen on IPV4-ADDRESS or IPV6-ADDRESS on port PORT-NUMBER.\n");
-        fprintf(stderr, "It will serve UDP or TCP DNS queries matching APEX-NAME.\n");
+	fprintf(stderr, "It will serve UDP queries matching the APEX-NAMEs.\n");
+	fprintf(stderr, "\n");
 	fprintf(stderr, "The -a parameter may be specified multiple times.\n");
+	fprintf(stderr, "If -t is specified, also serve TCP queries.\n");
 	fprintf(stderr, "\n");
 	exit(EXIT_FAILURE);
 }
@@ -305,12 +310,13 @@ int main(int argc, char **argv)
 	const char *ip6_address = NULL;
 	const char *port_number = NULL;
 	bool domain_name = false;
+	bool want_tcp = false;
 
 	struct event_base *base = event_base_new();
 	struct evldns_server *server = evldns_add_server(base);
 
 	/* Args. */
-	while ((c = getopt(argc, argv, "4:6:p:a:")) != -1) {
+	while ((c = getopt(argc, argv, "4:6:p:a:t")) != -1) {
 		switch (c) {
 		case '4':
 			ip_address = optarg;
@@ -326,6 +332,9 @@ int main(int argc, char **argv)
 		case 'a':
 			add_callback_domain(server, optarg);
 			domain_name = true;
+			break;
+		case 't':
+			want_tcp = true;
 			break;
 		default:
 			usage();
@@ -348,12 +357,14 @@ int main(int argc, char **argv)
 	evldns_add_server_port(server, socket);
 
 	/* Setup TCP socket. */
-	socket = bind_to_tcp_address(ip_address, port_number, 10 /* backlog */);
-	if (socket < 0) {
-		fprintf(stderr, "dtwhoami: bind_to_tcp_address() failed\n");
-		return EXIT_FAILURE;
+	if (want_tcp) {
+		socket = bind_to_tcp_address(ip_address, port_number, 10 /* backlog */);
+		if (socket < 0) {
+			fprintf(stderr, "dtwhoami: bind_to_tcp_address() failed\n");
+			return EXIT_FAILURE;
+		}
+		evldns_add_server_port(server, socket);
 	}
-	evldns_add_server_port(server, socket);
 
 	fprintf(stderr, "dtwhoami: Listening for queries on [%s]:%s.\n",
 		ip_address, port_number);
