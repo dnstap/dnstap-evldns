@@ -30,6 +30,7 @@ AC_PROG_LN_S
 # Checks for libraries.
 PKG_CHECK_MODULES([libevent], [libevent >= 2])
 PKG_CHECK_MODULES([libldns], [libldns >= 1.6.5])
+PKG_CHECK_MODULES([libprotobuf_c], [libprotobuf-c >= 1.0.1])
 
 # Checks for header files.
 AC_CHECK_HEADERS([stdlib.h string.h unistd.h])

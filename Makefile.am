@@ -6,7 +6,7 @@ AM_CFLAGS = \
 
 noinst_HEADERS = evldns.h
 
-bin_PROGRAMS	= chaos as112d oas112d fixed
+bin_PROGRAMS	= chaos as112d oas112d fixed dtwhoami
 
 chaos_SOURCES	= chaos.c
 chaos_LDADD     = libevldns.la
@@ -19,6 +19,9 @@ oas112d_LDADD   = libevldns.la
 
 fixed_SOURCES	= fixed.c
 fixed_LDADD     = libevldns.la
+
+dtwhoami_SOURCES = dtwhoami.c dnstap.pb-c.c
+dtwhoami_LDADD   = libevldns.la ${libprotobuf_c_LIBS}
 
 noinst_LTLIBRARIES = libevldns.la
 libevldns_la_SOURCES = evldns.c plugin.c function.c network.c
