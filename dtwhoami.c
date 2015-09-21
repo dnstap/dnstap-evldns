@@ -30,21 +30,27 @@
 #include "evldns.h"
 
 static void
-print_ip_address(const struct sockaddr_storage *ss, FILE *fp)
+print_socket(const struct sockaddr_storage *ss, FILE *fp)
 {
-	const char *ret = NULL;
+	const char *addr = NULL;
 	char s[INET6_ADDRSTRLEN] = {0};
+	uint16_t port = 0;
 
 	if (ss->ss_family == AF_INET) {
 		const struct sockaddr_in *sai = (const struct sockaddr_in *) ss;
-		ret = inet_ntop(AF_INET, &sai->sin_addr, s, sizeof(s));
+		addr = inet_ntop(AF_INET, &sai->sin_addr, s, sizeof(s));
+		port = ntohs(sai->sin_port);
 	} else if (ss->ss_family == AF_INET6) {
 		const struct sockaddr_in6 *sai6 = (const struct sockaddr_in6 *) ss;
-		ret = inet_ntop(AF_INET6, &sai6->sin6_addr, s, sizeof(s));
+		addr = inet_ntop(AF_INET6, &sai6->sin6_addr, s, sizeof(s));
+		port = ntohs(sai6->sin6_port);
 	}
 
-	if (ret)
-		fputs(ret, fp);
+	if (addr) {
+		fprintf(fp, "[%s]:%hu", addr, port);
+	} else {
+		fputs("[ERROR]", fp);
+	}
 }
 
 static ldns_rdf *
@@ -239,7 +245,7 @@ query_drop(evldns_server_request *q,
 	char *str_qclass = ldns_rr_class2str(qclass);
 
 	fputs("dtwhoami: Dropping query from ", stderr);
-	print_ip_address(&q->addr, stderr);
+	print_socket(&q->addr, stderr);
 	fputs(" for ", stderr);
 	ldns_rdf_print(stderr, qname);
 	fprintf(stderr, "/%s/%s\n", str_qclass, str_qtype);
