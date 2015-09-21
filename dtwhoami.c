@@ -53,6 +53,28 @@ print_socket(const struct sockaddr_storage *ss, FILE *fp)
 	}
 }
 
+static void
+log_query(const evldns_server_request *q,
+	  const ldns_rdf *qname,
+	  const ldns_rr_type qtype,
+	  const ldns_rr_class qclass,
+	  const char *prefix,
+	  FILE *fp)
+{
+	char *str_qtype = ldns_rr_type2str(qtype);
+	char *str_qclass = ldns_rr_class2str(qclass);
+
+	fprintf(fp, "dtwhoami: %s from ", prefix);
+	print_socket(&q->addr, fp);
+	fputs(" for ", fp);
+	ldns_rdf_print(fp, qname);
+	fprintf(fp, "/%s/%s\n", str_qclass, str_qtype);
+
+	/* Cleanup. */
+	free(str_qtype);
+	free(str_qclass);
+}
+
 static ldns_rdf *
 get_rdf_a(evldns_server_request *q)
 {
@@ -241,20 +263,8 @@ query_drop(evldns_server_request *q,
 	   ldns_rr_type qtype,
 	   ldns_rr_class qclass)
 {
-	char *str_qtype = ldns_rr_type2str(qtype);
-	char *str_qclass = ldns_rr_class2str(qclass);
-
-	fputs("dtwhoami: Dropping query from ", stderr);
-	print_socket(&q->addr, stderr);
-	fputs(" for ", stderr);
-	ldns_rdf_print(stderr, qname);
-	fprintf(stderr, "/%s/%s\n", str_qclass, str_qtype);
-
+	log_query(q, qname, qtype, qclass, "Dropping query", stderr);
 	q->blackhole = 1;
-
-	/* Cleanup. */
-	free(str_qtype);
-	free(str_qclass);
 }
 
 static void
