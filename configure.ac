@@ -27,6 +27,10 @@ AC_PROG_CXX
 AC_PROG_LIBTOOL
 AC_PROG_LN_S
 
+AC_PATH_PROG([PROTOC_C], [protoc-c])
+AS_IF([test -z "$PROTOC_C"],
+  AC_MSG_ERROR([The protoc-c program was not found. Please install the protobuf-c compiler!]))
+
 # Checks for libraries.
 PKG_CHECK_MODULES([libevent], [libevent >= 2])
 PKG_CHECK_MODULES([libldns], [libldns >= 1.6.5])

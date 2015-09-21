@@ -1,8 +1,24 @@
 ACLOCAL_AMFLAGS	= -I m4
+BUILT_SOURCES =
+CLEANFILES =
+EXTRA_DIST =
 
 AM_CFLAGS = \
 	${libevent_CFLAGS} \
 	${libldns_CFLAGS}
+
+SUFFIXES = .proto .pb-c.c .pb-c.h
+
+.proto.pb-c.c:
+	$(AM_V_GEN)@PROTOC_C@ "--c_out=`pwd`" -I$(top_srcdir) $<
+
+.proto.pb-c.h:
+	$(AM_V_GEN)@PROTOC_C@ "--c_out=`pwd`" -I$(top_srcdir) $<
+
+EXTRA_DIST += dnstap.proto
+PROTOBUF_SOURCES = dnstap.pb-c.c dnstap.pb-c.h
+BUILT_SOURCES += ${PROTOBUF_SOURCES}
+CLEANFILES += ${PROTOBUF_SOURCES}
 
 noinst_HEADERS = evldns.h
 
@@ -20,7 +36,8 @@ oas112d_LDADD   = libevldns.la
 fixed_SOURCES	= fixed.c
 fixed_LDADD     = libevldns.la
 
-dtwhoami_SOURCES = dtwhoami.c dnstap.pb-c.c
+dtwhoami_SOURCES = dtwhoami.c
+nodist_dtwhoami_SOURCES = ${PROTOBUF_SOURCES}
 dtwhoami_LDADD   = libevldns.la ${libprotobuf_c_LIBS}
 
 noinst_LTLIBRARIES = libevldns.la
