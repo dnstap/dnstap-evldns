@@ -241,7 +241,7 @@ query_drop(evldns_server_request *q,
 	ldns_rdf_print(stderr, qname);
 	fprintf(stderr, "/CLASS%hu/TYPE%hu\n", (uint16_t) qclass, (uint16_t) qtype);
 
-	q->response = NULL;
+	q->blackhole = 1;
 }
 
 static void
