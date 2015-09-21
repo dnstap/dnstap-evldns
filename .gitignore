@@ -1,6 +1,8 @@
 *.la
 *.lo
 *.o
+*.pb-c.c
+*.pb-c.h
 .deps/
 .libs/
 Makefile
