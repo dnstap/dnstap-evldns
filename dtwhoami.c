@@ -216,6 +216,8 @@ query_dtwhoami(evldns_server_request *q,
 	       ldns_rr_type qtype,
 	       ldns_rr_class qclass)
 {
+	log_query(q, qname, qtype, qclass, "Answering query", stderr);
+
 	/* Initialize the response from the request. */
 	q->response = evldns_response(q->request, LDNS_RCODE_NOERROR);
 
