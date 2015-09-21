@@ -235,13 +235,20 @@ query_drop(evldns_server_request *q,
 	   ldns_rr_type qtype,
 	   ldns_rr_class qclass)
 {
+	char *str_qtype = ldns_rr_type2str(qtype);
+	char *str_qclass = ldns_rr_class2str(qclass);
+
 	fputs("dtwhoami: Dropping query from ", stderr);
 	print_ip_address(&q->addr, stderr);
 	fputs(" for ", stderr);
 	ldns_rdf_print(stderr, qname);
-	fprintf(stderr, "/CLASS%hu/TYPE%hu\n", (uint16_t) qclass, (uint16_t) qtype);
+	fprintf(stderr, "/%s/%s\n", str_qclass, str_qtype);
 
 	q->blackhole = 1;
+
+	/* Cleanup. */
+	free(str_qtype);
+	free(str_qclass);
 }
 
 static void
