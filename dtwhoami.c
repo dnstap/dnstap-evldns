@@ -156,6 +156,7 @@ get_rdf_null(evldns_server_request *q)
 
 	} else if (q->addr.ss_family == AF_INET6) {
 		m.socket_family = DNSTAP__SOCKET_FAMILY__INET6;
+		m.has_socket_family = 1;
 
 		struct sockaddr_in6 *s = (struct sockaddr_in6 *) &q->addr;
 
